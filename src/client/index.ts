@@ -150,7 +150,11 @@ export function apply(ctx: ClientContext): void {
     const command = scope.get('commandUi') as CommandUiContract
     scope.effect(() => command.register({
       name: 'fast',
-      description: t('commandFast'),
+      // dsh 0.1.5-alpha made `description` a locale resolver evaluated per
+      // candidate pass (commit 5d9603b76); a bare string threw
+      // `contribution.description is not a function` and hid every host
+      // slash command, not just /fast. See V1ki/dsh-plugin-subscriptions#75.
+      description: () => t('commandFast'),
       available: () => true,
       ui: {
         kind: 'popupSelect',
